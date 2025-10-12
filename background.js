@@ -19,33 +19,25 @@ async function loadConfig() {
 
 // Close all other tabs and safely open JSON tabs
 async function resetTabsAndOpen() {
-  // 1️⃣ Open a blank tab to secure Chrome
   chrome.tabs.create({ url: "about:blank", active: true }, blankTab => {
     const blankTabId = blankTab.id;
 
-    // 2️⃣ Close all other tabs except the blank tab
     chrome.tabs.query({}, tabs => {
-      const tabsToClose = tabs
-        .filter(t => t.id !== blankTabId)
-        .map(t => t.id);
-
+      const tabsToClose = tabs.filter(t => t.id !== blankTabId).map(t => t.id);
       if (tabsToClose.length) chrome.tabs.remove(tabsToClose);
 
-      // 3️⃣ Open JSON tabs after a short delay
       setTimeout(async () => {
         config = await loadConfig();
         config.forEach(item => {
-          chrome.tabs.create({ url: item.url, active: false });
+          if (item.url) chrome.tabs.create({ url: item.url, active: false });
         });
 
-        // 4️⃣ Close the blank tab after JSON tabs are opened
         setTimeout(() => {
           chrome.tabs.remove(blankTabId);
-          // Start rotation
           currentIndex = 0;
           switchTab();
-        }, 500); // delay to ensure all tabs are created
-      }, 200); // delay after closing old tabs
+        }, 500);
+      }, 200);
     });
   });
 }
@@ -89,9 +81,9 @@ function stopRotation() {
 function setActiveIcon() {
   chrome.action.setIcon({
     path: {
-      "16": "icon16_active.png",
-      "48": "icon48_active.png",
-      "128": "icon128_active.png"
+      "16": "assets/icon16_active.png",
+      "48": "assets/icon48_active.png",
+      "128": "assets/icon128_active.png"
     }
   });
 }
@@ -100,9 +92,9 @@ function setActiveIcon() {
 function setInactiveIcon() {
   chrome.action.setIcon({
     path: {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
     }
   });
 }
@@ -112,7 +104,7 @@ chrome.action.onClicked.addListener(() => {
   isActive = !isActive;
   if (isActive) {
     console.log("Rotation enabled");
-    resetTabsAndOpen(); // close existing tabs and open JSON tabs
+    resetTabsAndOpen();
     setActiveIcon();
   } else {
     console.log("Rotation disabled");
@@ -152,23 +144,39 @@ chrome.runtime.onStartup.addListener(async () => {
   }
 });
 
-// Also on extension reload
+// On installation or reload
 chrome.runtime.onInstalled.addListener(async () => {
-  const data = await chrome.storage.sync.get(["tabConfig"]);
-  if (!data.tabConfig) return;
+  let data = await chrome.storage.sync.get(["tabConfig"]);
+  if (!data.tabConfig) {
+    const defaultConfig = {
+      autoStartExtension: false,
+      tabs: [
+        { url: "https://www.google.com", time: 5, refresh: false }
+      ]
+    };
+    await chrome.storage.sync.set({ tabConfig: JSON.stringify(defaultConfig) });
+    console.log("Default configuration created");
+    data = { tabConfig: JSON.stringify(defaultConfig) };
+
+    // Optional: open options page on first install
+    chrome.runtime.openOptionsPage();
+  }
 
   try {
     const parsed = JSON.parse(data.tabConfig);
     const autoStart = parsed.autoStartExtension;
+
     if (autoStart) {
+      console.log("Auto-start enabled");
       isActive = true;
       setActiveIcon();
       resetTabsAndOpen();
     } else {
+      console.log("Auto-start disabled");
       setInactiveIcon();
     }
-  } catch {
+  } catch (e) {
+    console.error("Error loading configuration:", e);
     setInactiveIcon();
-    console.error("Invalid JSON on installation");
   }
 });
