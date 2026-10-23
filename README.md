@@ -19,7 +19,7 @@
 
 **Option 1 – Chrome Web Store (recommended)**  
 Download the extension directly from the Chrome Web Store:  
-👉 [Auto Tab Switcher – Chrome Web Store](https://chrome.google.com/webstore/detail/auto-tab-switcher/)
+👉 [Auto Tab Switcher – Chrome Web Store](https://chromewebstore.google.com/detail/auto-tab-switcher/honbgkddhgahbpgcihnmnbbodpbmacio)
 
 **Option 2 – Manual installation (for developers)**  
 1. Clone or download this repository.  
@@ -56,7 +56,7 @@ Download the extension directly from the Chrome Web Store:
 
 **Option 1 – Chrome Web Store (recommended)**  
 Téléchargez l’extension directement depuis le Chrome Web Store :  
-👉 [Auto Tab Switcher – Chrome Web Store](https://chrome.google.com/webstore/detail/auto-tab-switcher/)
+👉 [Auto Tab Switcher – Chrome Web Store](https://chromewebstore.google.com/detail/auto-tab-switcher/honbgkddhgahbpgcihnmnbbodpbmacio)
 
 
 **Option 2 – Installation manuelle (pour développeurs)**  

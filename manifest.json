@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Auto Tab Switcher",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Automatically switch between tabs based on user-defined intervals.",
+  "homepage_url": "https://lps-consulting.fr",
   "permissions": [
     "tabs",
     "storage"

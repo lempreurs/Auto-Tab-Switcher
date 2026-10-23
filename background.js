@@ -18,12 +18,14 @@ async function loadConfig() {
 }
 
 // Close all other tabs and safely open JSON tabs
-async function resetTabsAndOpen() {
+async function resetTabsAndOpen(keepTabId) {
   chrome.tabs.create({ url: "about:blank", active: true }, blankTab => {
     const blankTabId = blankTab.id;
 
     chrome.tabs.query({}, tabs => {
-      const tabsToClose = tabs.filter(t => t.id !== blankTabId).map(t => t.id);
+      const tabsToClose = tabs
+        .filter(t => t.id !== blankTabId && t.id !== keepTabId)
+        .map(t => t.id);
       if (tabsToClose.length) chrome.tabs.remove(tabsToClose);
 
       setTimeout(async () => {
@@ -110,6 +112,26 @@ chrome.action.onClicked.addListener(() => {
     console.log("Rotation disabled");
     stopRotation();
     setInactiveIcon();
+  }
+});
+
+// Messages from the options page
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (!message || !message.action) return;
+
+  if (message.action === "start") {
+    isActive = true;
+    setActiveIcon();
+    sendResponse({ active: true });
+    const keepTabId = sender.tab ? sender.tab.id : null;
+    setTimeout(() => resetTabsAndOpen(keepTabId), 100);
+  } else if (message.action === "stop") {
+    isActive = false;
+    stopRotation();
+    setInactiveIcon();
+    sendResponse({ active: false });
+  } else if (message.action === "getState") {
+    sendResponse({ active: isActive });
   }
 });
 

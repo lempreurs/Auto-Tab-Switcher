@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <title>Options - Auto Tab Switcher</title>
@@ -8,22 +8,120 @@
     body {
       font-family: 'Roboto', sans-serif;
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       background-color: #f0f4ff;
       color: #333;
     }
 
-    /* Titre principal */
+    /* Barre de titre */
+    .topbar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: #073664;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      padding: 10px 20px;
+      gap: 12px;
+    }
+
+    .topbar-logo {
+      width: 32px;
+      height: 32px;
+      flex: none;
+    }
+
     h1 {
       margin: 0;
-      padding: 20px 30px;
-      background: #073664;
+      padding: 10px 0;
       color: white;
       font-size: 26px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      flex: 1 1 auto;
+    }
+
+    .lang-switch {
+      margin-left: auto;
+      position: relative;
+    }
+
+    .lang-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: #0b4d8a;
+      color: #fff;
+      border: 1px solid #1e90ff;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .lang-toggle:hover {
+      background: #1565a8;
+    }
+
+    .caret {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+
+    .flag {
+      display: block;
+      width: 18px;
+      height: 12px;
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.35);
+    }
+
+    .lang-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      margin: 0;
+      padding: 4px;
+      list-style: none;
+      min-width: 140px;
+      background: #fff;
+      border: 1px solid #b5d1f2;
+      border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(7,54,100,0.25);
+      z-index: 50;
+    }
+
+    .lang-menu.open {
+      display: block;
+    }
+
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 6px 8px;
+      background: transparent;
+      color: #073664;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: left;
+    }
+
+    .lang-option:hover {
+      background: #eef5ff;
+    }
+
+    .lang-option.active {
+      background: #e6f0ff;
+      font-weight: 700;
+    }
+
+    .lang-option .flag {
+      box-shadow: 0 0 0 1px rgba(7,54,100,0.25);
     }
 
     /* Conteneur principal plein écran */
@@ -34,41 +132,436 @@
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
+      width: 100%;
     }
 
     /* Titres secondaires */
     h2 {
       margin-top: 0;
       color: #1a4dab;
+      font-size: 20px;
+      border-bottom: 2px solid #e6f0ff;
+      padding-bottom: 8px;
     }
 
-    /* Exemple JSON */
-    pre {
+    section {
+      margin-bottom: 30px;
+    }
+
+    /* Cases et libellés */
+    label {
+      font-size: 15px;
+      color: #333;
+    }
+
+    .inline-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    /* Switch toggle */
+    .switch {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .switch-track {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      background: #c7d2e3;
+      border-radius: 999px;
+      transition: background .2s;
+      flex: none;
+    }
+
+    .switch-track::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(7,54,100,0.25);
+      transition: transform .2s;
+    }
+
+    .switch input:checked + .switch-track {
+      background: #1e90ff;
+    }
+
+    .switch input:checked + .switch-track::after {
+      transform: translateX(20px);
+    }
+
+    .switch-text {
+      font-weight: 500;
+      color: #333;
+    }
+
+    /* Zone de saisie */
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      font-family: 'Roboto', sans-serif;
+      background-color: #eef7ff;
+      border: 1px solid #b5d1f2;
+      border-radius: 6px;
+      padding: 10px 12px;
+      box-sizing: border-box;
+      font-size: 14px;
+      color: #333;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #1e90ff;
+      box-shadow: 0 0 0 3px rgba(30,144,255,0.15);
+    }
+
+    /* Liste des sites */
+    #tabs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-list-header {
+      display: grid;
+      grid-template-columns: 28px 1fr 90px 90px 36px;
+      gap: 12px;
+      align-items: center;
+      padding: 0 12px 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #1a4dab;
+      font-weight: 700;
+    }
+
+    .tab-list-header .header-center {
+      text-align: center;
+    }
+
+    .tab-item {
+      display: grid;
+      grid-template-columns: 28px 1fr 90px 90px 36px;
+      align-items: center;
+      gap: 12px;
       background: #f4f8ff;
       padding: 12px;
       border-left: 4px solid #1e90ff;
       border-radius: 5px;
-      overflow-x: auto;
-      margin-bottom: 20px;
     }
 
-    /* Zone de saisie */
-    textarea {
+    .tab-item input[type="number"] {
+      text-align: center;
+    }
+
+    .tab-item .refresh-wrap {
+      justify-self: center;
+    }
+
+    .tab-item .remove-btn {
+      justify-self: center;
+    }
+
+    .tab-item.dragging {
+      opacity: 0.45;
+    }
+
+    .tab-item.drag-over {
+      outline: 2px dashed #1e90ff;
+      outline-offset: -2px;
+    }
+
+    .drag-handle {
+      flex: none;
+      font-size: 18px;
+      line-height: 1;
+      color: #7b8fa6;
+      cursor: grab;
+      user-select: none;
+      padding: 0 4px;
+    }
+
+    .drag-handle:hover {
+      color: #1e90ff;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .tab-item input[type="text"] {
       flex: 1;
+      min-width: 120px;
+    }
+
+    .tab-item input[type="number"] {
+      width: 80px;
+      flex: none;
+    }
+
+    .tab-item .refresh-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #4a6fa8;
+      white-space: nowrap;
+    }
+
+    .tab-item .refresh-wrap .switch-track {
+      width: 40px;
+      height: 22px;
+    }
+
+    .tab-item .refresh-wrap .switch-track::after {
+      width: 16px;
+      height: 16px;
+    }
+
+    .tab-item .refresh-wrap input:checked + .switch-track::after {
+      transform: translateX(18px);
+    }
+
+    .tab-item .remove-btn {
+      flex: none;
+      margin: 0;
+      padding: 4px 10px;
+      background: #e04b4b;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .tab-item .remove-btn:hover {
+      background: #c93a3a;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #7b8fa6;
+      font-size: 14px;
+      padding: 18px;
+      background: #f4f8ff;
+      border-left: 4px solid #b5d1f2;
+      border-radius: 5px;
+    }
+
+    /* Formulaire d'ajout */
+    .add-tab-form {
+      display: grid;
+      grid-template-columns: 1fr 100px auto auto;
+      gap: 12px;
+      align-items: end;
+      background: #f4f8ff;
+      padding: 14px;
+      border-left: 4px solid #1e90ff;
+      border-radius: 5px;
+    }
+
+    .add-tab-form .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .add-tab-form .field.refresh-field {
+      align-items: center;
+      padding-bottom: 4px;
+    }
+
+    .field-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #1a4dab;
+      font-weight: 700;
+    }
+
+    /* Onglets */
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 2px solid #e6f0ff;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      margin: 0 0 -2px;
+      padding: 10px 18px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      border-radius: 0;
+      color: #7b8fa6;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .tab-btn:hover {
+      background: transparent;
+      color: #1a4dab;
+    }
+
+    .tab-btn.active {
+      color: #1a4dab;
+      border-bottom-color: #1e90ff;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Éditeur JSON */
+    textarea#config {
       width: 100%;
-      font-family: monospace;
+      min-height: 220px;
+      font-family: 'Consolas', Monaco, monospace;
+      font-size: 13px;
       background-color: #eef7ff;
       border: 1px solid #b5d1f2;
       border-radius: 6px;
       padding: 12px;
       box-sizing: border-box;
-      resize: none;
+      resize: vertical;
+      color: #333;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    textarea#config:focus {
+      outline: none;
+      border-color: #1e90ff;
+      box-shadow: 0 0 0 3px rgba(30,144,255,0.15);
+    }
+
+    .help-text {
+      color: #7b8fa6;
+      font-size: 13px;
+      margin: 0 0 10px;
+    }
+
+    .json-help-list {
+      margin: 0 0 14px;
+      padding: 12px 14px;
+      list-style: none;
+      background: #f4f8ff;
+      border-left: 4px solid #1e90ff;
+      border-radius: 5px;
+    }
+
+    .json-help-list li {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #334e68;
+    }
+
+    .json-help-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .json-help-list code {
+      background: #e6f0ff;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', Monaco, monospace;
+      color: #073664;
+    }
+
+    .json-value {
+      background: #fff;
+      border: 1px solid #b5d1f2;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', Monaco, monospace;
+      color: #1a4dab;
+      font-weight: 600;
+    }
+
+    .json-desc {
+      color: #7b8fa6;
+    }
+
+    .field-help {
+      background: #f4f8ff;
+      border-left: 4px solid #1e90ff;
+      border-radius: 5px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #334e68;
+    }
+
+    .field-help strong {
+      display: block;
+      color: #1a4dab;
+      margin-bottom: 8px;
+    }
+
+    .field-help ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .field-help li {
+      margin-bottom: 4px;
+    }
+
+    .field-help code,
+    .help-text code {
+      background: #e6f0ff;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'Consolas', Monaco, monospace;
+    }
+
+    .json-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    #jsonStatus {
+      font-size: 14px;
+      font-weight: 500;
+      min-height: 18px;
     }
 
     /* Bouton */
     button {
-      margin-top: 15px;
-      align-self: flex-start;
       padding: 10px 20px;
       cursor: pointer;
       background: #1e90ff;
@@ -81,6 +574,61 @@
 
     button:hover {
       background: #166fcb;
+    }
+
+    .btn-add {
+      height: 34px;
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+
+    .btn-save {
+      background: #073664;
+    }
+
+    .btn-save:hover {
+      background: #0b4d8a;
+    }
+
+    .btn-start {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+      padding: 8px 16px;
+      font-size: 14px;
+      background: #22a06b;
+    }
+
+    .btn-start:hover {
+      background: #1b8457;
+    }
+
+    .start-icon {
+      width: 15px;
+      height: 15px;
+      flex: none;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .actions-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #statusMsg {
+      color: #1a4dab;
+      font-size: 14px;
+      font-weight: 500;
+      min-height: 18px;
     }
 
     /* Footer */
@@ -107,28 +655,256 @@
       max-width: 80px;
       opacity: 0.9;
     }
+
+    @media (max-width: 920px) {
+      .topbar {
+        flex-wrap: wrap;
+        padding: 10px 16px;
+      }
+      h1 {
+        flex: 1 1 auto;
+        padding: 6px 0;
+        font-size: 22px;
+      }
+    }
+
+    @media (max-width: 740px) {
+      .tab-list-header {
+        display: none;
+      }
+      .tab-item {
+        grid-template-columns: 28px 1fr;
+        grid-template-areas:
+          "handle url"
+          "handle time"
+          "handle refresh"
+          "handle remove";
+      }
+      .tab-item .drag-handle {
+        grid-area: handle;
+        align-self: start;
+      }
+      .tab-item input[type="text"] {
+        grid-area: url;
+      }
+      .tab-item input[type="number"] {
+        grid-area: time;
+        width: 100%;
+      }
+      .tab-item .refresh-wrap {
+        grid-area: refresh;
+        justify-self: start;
+      }
+      .tab-item .remove-btn {
+        grid-area: remove;
+        justify-self: start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        gap: 10px;
+      }
+      h1 {
+        font-size: 18px;
+      }
+      .tabs {
+        flex-wrap: wrap;
+      }
+      .add-tab-form {
+        grid-template-columns: 1fr;
+      }
+      .add-tab-form .field.refresh-field {
+        padding-bottom: 0;
+      }
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .actions-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Auto Tab Switcher - Options</h1>
-  <main>
-    <h2>JSON Configuration</h2>
-    <p>Example:</p>
-    <pre>{
-  "autoStartExtension": false,
-  "tabs": [
-    { "url": "https://www.google.com/", "time": 5, "refresh": false },
-    { "url": "https://www.wikipedia.org/", "time": 8, "refresh": true }
-  ]
-}</pre>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="flag-fr" viewBox="0 0 3 2">
+        <rect width="3" height="2" fill="#fff"/>
+        <rect width="1" height="2" fill="#0055A4"/>
+        <rect x="2" width="1" height="2" fill="#EF4135"/>
+      </symbol>
+      <symbol id="flag-en" viewBox="0 0 60 30">
+        <clipPath id="ukFlag"><rect width="60" height="30"/></clipPath>
+        <g clip-path="url(#ukFlag)">
+          <rect width="60" height="30" fill="#012169"/>
+          <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+          <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="3"/>
+          <path d="M30,0 V30 M0,15 H60" stroke="#fff" stroke-width="10"/>
+          <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"/>
+        </g>
+      </symbol>
+      <symbol id="flag-es" viewBox="0 0 3 2">
+        <rect width="3" height="2" fill="#AA151B"/>
+        <rect y="0.5" width="3" height="1" fill="#F1BF00"/>
+      </symbol>
+      <symbol id="flag-zh" viewBox="0 0 3 2">
+        <rect width="3" height="2" fill="#DE2910"/>
+        <polygon points="0.6,0.35 0.68,0.52 0.86,0.52 0.71,0.63 0.77,0.81 0.6,0.7 0.43,0.81 0.49,0.63 0.34,0.52 0.52,0.52" fill="#FFDE00"/>
+      </symbol>
+    </defs>
+  </svg>
 
-    <textarea id="config"></textarea>
-    <button id="save">Save</button>
+  <header class="topbar">
+    <img src="assets/icon48.png" alt="Auto Tab Switcher" class="topbar-logo">
+    <h1 data-i18n="optionsTitle">Auto Tab Switcher - Options</h1>
+    <div class="lang-switch">
+      <button type="button" class="lang-toggle" id="langToggle" aria-haspopup="listbox" aria-expanded="false">
+        <svg class="flag" aria-hidden="true"><use id="langFlagUse" href="#flag-fr"></use></svg>
+        <span id="langCurrent">FR</span>
+        <span class="caret" aria-hidden="true">▾</span>
+      </button>
+      <ul class="lang-menu" id="langMenu" role="listbox" aria-label="Langue">
+        <li role="option">
+          <button type="button" class="lang-option active" data-lang="fr" aria-selected="true">
+            <svg class="flag" aria-hidden="true"><use href="#flag-fr"></use></svg><span>Français</span>
+          </button>
+        </li>
+        <li role="option">
+          <button type="button" class="lang-option" data-lang="en" aria-selected="false">
+            <svg class="flag" aria-hidden="true"><use href="#flag-en"></use></svg><span>English</span>
+          </button>
+        </li>
+        <li role="option">
+          <button type="button" class="lang-option" data-lang="es" aria-selected="false">
+            <svg class="flag" aria-hidden="true"><use href="#flag-es"></use></svg><span>Español</span>
+          </button>
+        </li>
+        <li role="option">
+          <button type="button" class="lang-option" data-lang="zh" aria-selected="false">
+            <svg class="flag" aria-hidden="true"><use href="#flag-zh"></use></svg><span>中文</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </header>
+  <main>
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab-btn active" data-tab="graphical" role="tab" aria-selected="true" data-i18n="tabGraphical">Graphique</button>
+      <button type="button" class="tab-btn" data-tab="json" role="tab" aria-selected="false" data-i18n="tabJson">JSON</button>
+      <button type="button" id="startConfig" class="btn-start">
+        <svg class="start-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        <span data-i18n="startBtn">Démarrer</span>
+      </button>
+    </div>
+
+    <div class="tab-panel active" id="panel-graphical" role="tabpanel">
+      <div class="field-help">
+        <strong data-i18n="fieldHelpTitle">Explication des champs</strong>
+        <ul>
+          <li><b data-i18n="helpAutoStartLabel">Démarrer automatiquement</b> : <span data-i18n="helpAutoStartText">lance la rotation dès l'ouverture de Chrome.</span></li>
+          <li><b data-i18n="helpUrlLabel">URL du site</b> : <span data-i18n="helpUrlText">adresse complète de la page à afficher.</span></li>
+          <li><b data-i18n="helpTimeLabel">Durée (s)</b> : <span data-i18n="helpTimeText">nombre de secondes d'affichage avant de passer au site suivant.</span></li>
+          <li><b data-i18n="helpRefreshLabel">Actualiser</b> : <span data-i18n="helpRefreshText">recharge la page chaque fois qu'elle redevient active.</span></li>
+        </ul>
+      </div>
+
+      <section>
+        <label class="switch">
+          <input type="checkbox" id="autoStart">
+          <span class="switch-track"></span>
+          <span class="switch-text" data-i18n="autoStartLabel">Démarrer automatiquement l'extension</span>
+        </label>
+      </section>
+
+      <section>
+        <h2 data-i18n="sitesTitle">Sites configurés</h2>
+        <div class="tab-list-header">
+          <span></span>
+          <span data-i18n="headerUrl">URL</span>
+          <span class="header-center" data-i18n="headerTime">Durée (s)</span>
+          <span class="header-center" data-i18n="headerRefresh">Actualiser</span>
+          <span></span>
+        </div>
+        <div id="tabs-container">
+          <div class="empty-state" data-i18n="emptyState">Aucun site configuré pour le moment.</div>
+        </div>
+      </section>
+
+      <section>
+        <h2 data-i18n="addSiteTitle">Ajouter un site</h2>
+        <div class="add-tab-form">
+          <div class="field">
+            <span class="field-label" data-i18n="labelUrl">URL du site</span>
+            <input type="text" id="newTabUrl" data-i18n-placeholder="placeholderUrl" placeholder="https://www.exemple.com/">
+          </div>
+          <div class="field">
+            <span class="field-label" data-i18n="labelTime">Durée (s)</span>
+            <input type="number" id="newTabTime" min="1" value="5">
+          </div>
+          <div class="field refresh-field">
+            <label class="switch">
+              <input type="checkbox" id="newTabRefresh">
+              <span class="switch-track"></span>
+              <span class="switch-text" data-i18n="labelRefresh">Actualiser</span>
+            </label>
+          </div>
+          <button type="button" id="addTabBtn" class="btn-add" data-i18n="addBtn">Ajouter</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="tab-panel" id="panel-json" role="tabpanel">
+      <section>
+        <h2 data-i18n="jsonTitle">Configuration JSON</h2>
+        <p class="help-text" data-i18n="jsonHelpIntro">Chaque entrée du tableau tabs accepte les propriétés suivantes, avec une valeur d'exemple :</p>
+        <ul class="json-help-list">
+          <li>
+            <code>"url"</code>
+            <span class="json-value">"https://www.exemple.com/"</span>
+            <span class="json-desc" data-i18n="jsonUrlDesc">adresse du site</span>
+          </li>
+          <li>
+            <code>"time"</code>
+            <span class="json-value">5</span>
+            <span class="json-desc" data-i18n="jsonTimeDesc">durée d'affichage en secondes</span>
+          </li>
+          <li>
+            <code>"refresh"</code>
+            <span class="json-value">false</span>
+            <span class="json-desc" data-i18n="jsonRefreshDesc">recharger l'onglet lors du changement</span>
+          </li>
+          <li>
+            <code>"autoStartExtension"</code>
+            <span class="json-value">false</span>
+            <span class="json-desc" data-i18n="jsonAutoStartDesc">démarrage automatique au lancement de Chrome</span>
+          </li>
+        </ul>
+        <textarea id="config" spellcheck="false"></textarea>
+        <div class="json-actions">
+          <button type="button" id="applyJson" data-i18n="applyJsonBtn">Appliquer le JSON</button>
+          <span id="jsonStatus"></span>
+        </div>
+      </section>
+    </div>
+
+    <div class="actions">
+      <div></div>
+      <div class="actions-right">
+        <span id="statusMsg"></span>
+        <button type="button" id="saveConfig" class="btn-save" data-i18n="saveBtn">Enregistrer</button>
+      </div>
+    </div>
   </main>
 
   <footer>
-    <p>Auto Tab Switcher - <a href="https://github.com/yourusername/your-repo">GitHub</a></p>
-    <p>&copy; 2025 <a href="https://www.lps-consulting.com">LPS CONSULTING</a></p>
+    <p>Auto Tab Switcher - <a href="https://github.com/lempreurs/Auto-Tab-Switcher" target="_blank" rel="noopener noreferrer">GitHub</a>
+      &nbsp;·&nbsp;
+      <a href="https://chromewebstore.google.com/detail/auto-tab-switcher/honbgkddhgahbpgcihnmnbbodpbmacio" target="_blank" rel="noopener noreferrer" data-i18n="chromeStoreLink">Chrome Web Store</a>
+    </p>
+    <p>&copy; 2025 <a href="https://lps-consulting.fr" target="_blank" rel="noopener noreferrer">LPS CONSULTING</a></p>
     <img src="assets/lps.png" alt="Logo">
   </footer>
 
